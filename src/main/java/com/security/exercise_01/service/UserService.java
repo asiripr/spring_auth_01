@@ -19,6 +19,9 @@ public class UserService {
 	@Autowired
 	AuthenticationManager authManager;
 	
+	@Autowired
+	private JWTService jwtService;
+	
 	private BCryptPasswordEncoder encoder= new BCryptPasswordEncoder(12);
 	
 	public Users register(Users user) {
@@ -30,7 +33,7 @@ public class UserService {
 		Authentication authentication = (Authentication) authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 		
 		if (((org.springframework.security.core.Authentication) authentication).isAuthenticated()) {
-			return "Success!";
+			return jwtService.generateToken();
 		}
 		else {
 			return "Failed";
