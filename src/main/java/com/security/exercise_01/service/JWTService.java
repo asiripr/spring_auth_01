@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.*;
 import io.jsonwebtoken.security.*;
+import io.jsonwebtoken.security.SignatureAlgorithm;
 
 @Service
 public class JWTService {
@@ -28,6 +29,8 @@ public class JWTService {
 			keyGen = KeyGenerator.getInstance("HmacSHA256");
 			SecretKey sk = keyGen.generateKey();
 			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+			//secretKey = Base64.getEncoder().encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
+
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -72,11 +75,14 @@ public class JWTService {
 				.parseSignedClaims(token)
 				.getPayload();
 	}
+	
+
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		final String username = extractUsername(token);
-		return (username.equals(username.equals(userDetails.getUsername()) && !isTokenExpired(token)));
+	    final String username = extractUsername(token);
+	    return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
+
 
 	private boolean isTokenExpired(String token) {
 		return extractExpiration(token).before(new Date());
